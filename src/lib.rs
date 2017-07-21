@@ -202,6 +202,15 @@ impl Signature {
     }
 }
 
+impl serde::Serialize for Signature {
+    fn serialize<S>(&self, s: S) -> Result<S::Ok, S::Error>
+        where S: serde::Serializer
+    {
+        let secp = Secp256k1::with_caps(::ContextFlag::None);
+        (&self.serialize_compact(&secp)[..]).serialize(s)
+    }
+}
+
 /// Creates a new signature from a FFI signature
 impl From<ffi::Signature> for Signature {
     #[inline]
